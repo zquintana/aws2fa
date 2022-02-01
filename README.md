@@ -7,3 +7,5 @@ AWS 2FA Helper with support for 1Password token manager.
 
 Download binary in releases and put in `~/.bin`. Make sure `~/.bin` is in 
 your PATH.
+
+Run `aws2fa version` to ensure it's working.
