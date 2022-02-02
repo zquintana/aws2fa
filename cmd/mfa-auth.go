@@ -186,6 +186,6 @@ func getProfileSessionToken(cfg aws.Config, mfaArn string, mfaCode string) (*typ
 }
 
 func init() {
-	rootCmd.Flags().StringVarP(&mfaDeviceSerialNum, "mfa-device-arn", "M", "", "MFA Device ARN")
-	rootCmd.Flags().StringVarP(&tokenCode, "mfa-token", "T", "", "MFA Token")
+	mfaAuthCmd.Flags().StringVarP(&mfaDeviceSerialNum, "mfa-device-arn", "M", "", "MFA Device ARN")
+	mfaAuthCmd.Flags().StringVarP(&tokenCode, "mfa-token", "T", "", "MFA Token")
 }
