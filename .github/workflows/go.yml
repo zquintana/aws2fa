@@ -19,7 +19,7 @@ jobs:
         go-version: 1.17
 
     - name: Generate Version
-      run: echo "${{github.ref_name}}-${{github.sha}}-${{github.run_id}}" > .version
+      run: echo "${{github.ref_name}}-$(git rev-parse --short HEAD)" > .version
 
     - name: Build
       run: make clean && make
