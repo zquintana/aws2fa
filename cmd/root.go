@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	"fmt"
 	"github.com/spf13/cobra"
 	"gopkg.in/ini.v1"
 	"os"
@@ -10,6 +11,7 @@ import (
 var (
 	profile         string
 	durationSeconds int32
+	verbose         bool
 	rootCmd         = &cobra.Command{
 		Use: "aws2fa",
 	}
@@ -49,13 +51,23 @@ func getCurrentProfileName() string {
 	}
 }
 
+func log(a ...interface{}) {
+	if verbose != true {
+		return
+	}
+
+	fmt.Println(a...)
+}
+
 func init() {
 	rootCmd.PersistentFlags().StringVarP(&profile, "profile", "P", "", "AWS Profile")
 	rootCmd.PersistentFlags().Int32VarP(&durationSeconds, "duration-seconds", "D", int32(24*60*60), "Duration in seconds")
+	rootCmd.PersistentFlags().BoolVarP(&verbose, "verbose", "v", false, "")
 
 	rootCmd.AddCommand(mfaAuthCmd)
 	rootCmd.AddCommand(opCmd)
 	rootCmd.AddCommand(versionCmd)
+	rootCmd.AddCommand(selfUpdateCmd)
 }
 
 func Execute() error {
