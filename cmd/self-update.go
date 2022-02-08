@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"github.com/google/go-github/v42/github"
 	"github.com/schollz/progressbar/v3"
@@ -25,13 +26,7 @@ var (
 				return err
 			}
 
-			if latestRelease == nil {
-				fmt.Println("Already up to date")
-
-				return nil
-			}
-
-			if strings.Compare(version, *latestRelease.TagName) == 0 {
+			if isNewerVersion(getCurrentVersion(), *latestRelease.TagName) {
 				fmt.Println("No newer versions available")
 
 				return nil
@@ -155,5 +150,5 @@ func getLatestRelease() (*github.RepositoryRelease, *github.ReleaseAsset, error)
 		}
 	}
 
-	return nil, nil, nil
+	return nil, nil, errors.New("unable to discover matching release")
 }

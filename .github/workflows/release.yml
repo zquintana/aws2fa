@@ -17,10 +17,13 @@ jobs:
         go-version: 1.17
 
     - name: Generate Version
-      run: echo "${{github.ref_name}}-$(git rev-parse --short HEAD)" > .version
+      run: echo "${{github.ref_name}}+$(git rev-parse --short HEAD)" > .version
 
     - name: Build
-      run: make clean && make
+      run: make clean && make test
+
+    - name: Build
+      run: make
 
     - name: Publish binaries
       uses: actions/upload-artifact@v2
