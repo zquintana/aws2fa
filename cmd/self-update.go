@@ -2,10 +2,9 @@ package cmd
 
 import (
 	"context"
-	"errors"
 	"fmt"
-	"github.com/cheggaaa/pb/v3"
 	"github.com/google/go-github/v42/github"
+	"github.com/schollz/progressbar/v3"
 	"github.com/spf13/cobra"
 	"io"
 	"io/ioutil"
@@ -24,6 +23,12 @@ var (
 			latestRelease, asset, err := getLatestRelease()
 			if err != nil {
 				return err
+			}
+
+			if latestRelease == nil {
+				fmt.Println("Already up to date")
+
+				return nil
 			}
 
 			if strings.Compare(version, *latestRelease.TagName) == 0 {
@@ -101,12 +106,12 @@ func downloadAsset(asset *github.ReleaseAsset) (*os.File, error) {
 	}
 
 	log("Retrieved new file with length:", resp.ContentLength)
-	bar := pb.New64(resp.ContentLength)
+	bar := progressbar.DefaultBytes(resp.ContentLength, "downloading")
 
 	return writeReaderTo(resp.Body, bar)
 }
 
-func writeReaderTo(sourceStream io.ReadCloser, bar *pb.ProgressBar) (*os.File, error) {
+func writeReaderTo(sourceStream io.ReadCloser, bar *progressbar.ProgressBar) (*os.File, error) {
 	// open output file
 	fo, err := ioutil.TempFile(os.TempDir(), "aws2fa")
 	if err != nil {
@@ -121,25 +126,10 @@ func writeReaderTo(sourceStream io.ReadCloser, bar *pb.ProgressBar) (*os.File, e
 		}
 	}()
 
-	// make a buffer to keep chunks that are read
-	buf := make([]byte, 1024)
-	for {
-		// read a chunk
-		n, err := sourceStream.Read(buf)
-		if err != nil && err != io.EOF {
-			panic(err)
-		}
-		if n == 0 {
-			break
-		}
-
-		// write a chunk
-		if _, err := fo.Write(buf[:n]); err != nil {
-			panic(err)
-		}
+	_, err = io.Copy(io.MultiWriter(fo, bar), sourceStream)
+	if err != nil {
+		return nil, err
 	}
-
-	bar.Finish()
 
 	return fo, nil
 }
@@ -165,5 +155,5 @@ func getLatestRelease() (*github.RepositoryRelease, *github.ReleaseAsset, error)
 		}
 	}
 
-	return nil, nil, errors.New("unable to discover a release for current target")
+	return nil, nil, nil
 }
