@@ -88,24 +88,19 @@ func installNix(f *os.File) error {
 		return err
 	}
 
-	defer func(f *os.File) {
-		err := f.Close()
-		if err != nil {
-			panic(err)
-		}
-	}(f)
-
 	log("Installed binary at:", binPath)
 
-	return nil
+	return f.Close()
 }
 
 func downloadAsset(asset *github.ReleaseAsset) (*os.File, error) {
+	log("Starting download of", *asset.BrowserDownloadURL)
 	resp, err := http.Get(*asset.BrowserDownloadURL)
 	if err != nil {
 		return nil, err
 	}
 
+	log("Retrieved new file with length:", resp.ContentLength)
 	bar := pb.New64(resp.ContentLength)
 
 	return writeReaderTo(resp.Body, bar)
@@ -117,13 +112,10 @@ func writeReaderTo(sourceStream io.ReadCloser, bar *pb.ProgressBar) (*os.File, e
 	if err != nil {
 		return nil, err
 	}
+	log("Created temp file at:", fo.Name())
 
 	// close fo on exit and check for its returned error
 	defer func() {
-		if err := fo.Close(); err != nil {
-			panic(err)
-		}
-
 		if err := sourceStream.Close(); err != nil {
 			panic(err)
 		}
@@ -145,7 +137,6 @@ func writeReaderTo(sourceStream io.ReadCloser, bar *pb.ProgressBar) (*os.File, e
 		if _, err := fo.Write(buf[:n]); err != nil {
 			panic(err)
 		}
-		bar.Add(1024)
 	}
 
 	bar.Finish()
@@ -156,6 +147,7 @@ func writeReaderTo(sourceStream io.ReadCloser, bar *pb.ProgressBar) (*os.File, e
 func getLatestRelease() (*github.RepositoryRelease, *github.ReleaseAsset, error) {
 	c := github.NewClient(nil)
 	releases, _, err := c.Repositories.ListReleases(context.TODO(), "zquintana", "aws2fa", &github.ListOptions{})
+
 	if err != nil {
 		return nil, nil, err
 	}
