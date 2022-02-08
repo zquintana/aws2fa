@@ -1,14 +1,12 @@
 package cmd
 
 import (
-	"fmt"
 	"testing"
 )
 
 func TestIsLatest(t *testing.T) {
 	v := "0.2-abc123"
 
-	fmt.Println("Newer?", isNewerVersion(v, "0.2"))
 	if isNewerVersion(parseVersion(v), "0.2") {
 		t.Fatal("Version is already latest")
 	}

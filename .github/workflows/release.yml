@@ -19,7 +19,7 @@ jobs:
     - name: Generate Version
       run: echo "${{github.ref_name}}+$(git rev-parse --short HEAD)" > .version
 
-    - name: Build
+    - name: Test
       run: make clean && make test
 
     - name: Build

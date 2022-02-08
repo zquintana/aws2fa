@@ -21,6 +21,6 @@ install:
 	cp build/aws2fa-$(TARGET_PLATFORM)-amd64 $(HOME)/.bin/aws2fa
 
 test:
-	go test cmd/**
+	go test -v ./...
 
 default: build
