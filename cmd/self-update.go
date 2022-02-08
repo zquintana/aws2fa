@@ -90,7 +90,7 @@ func installNix(f *os.File) error {
 
 	log("Installed binary at:", binPath)
 
-	return f.Close()
+	return nil
 }
 
 func downloadAsset(asset *github.ReleaseAsset) (*os.File, error) {

@@ -12,7 +12,7 @@ build: .version
 	env GOOS=darwin GOARCH=amd64 go build -ldflags="-X 'aws2fa/cmd.version=$(shell cat .version)'" -o build/aws2fa-darwin-amd64
 
 .version:
-	echo "dev" > .version
+	echo "dev-build" > .version
 
 clean:
 	rm -rf ./build
