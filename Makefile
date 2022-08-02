@@ -10,6 +10,7 @@ endif
 build: .version
 	env GOOS=linux GOARCH=amd64 go build -ldflags="-X 'aws2fa/cmd.version=$(shell cat .version)'" -o build/aws2fa-linux-amd64
 	env GOOS=darwin GOARCH=amd64 go build -ldflags="-X 'aws2fa/cmd.version=$(shell cat .version)'" -o build/aws2fa-darwin-amd64
+	env GOOS=windows GOARCH=amd64 go build -ldflags="-X 'aws2fa/cmd.version=$(shell cat .version)'" -o build/aws2fa-windows-amd64
 
 .version:
 	echo "0.0+dev-build" > .version
