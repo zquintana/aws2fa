@@ -59,6 +59,15 @@ jobs:
         asset_path: build/aws2fa-linux-amd64
         asset_name: aws2fa-linux-amd64
         asset_content_type: application/octet-stream
+    - name: Upload Release Asset
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: build/aws2fa-windows-amd64
+        asset_name: aws2fa-windows-amd64
+        asset_content_type: application/octet-stream
 
 #     - name: Test
 #       run: go test -v ./...
